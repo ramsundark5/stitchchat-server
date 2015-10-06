@@ -1,0 +1,41 @@
+accounts{
+	phonenumber (pk),
+	displayName,
+	deviceids[],
+	devicetype,
+	apnId,
+	gcmId,
+	status,
+	lastSeenTime,
+	blockedUsers[],
+	extra
+}
+groupInfo{
+	uuid,
+	moderators[],
+	users[],
+	name,
+	photo,
+	status
+}
+blacklistedusers{
+	user
+}
+messages{
+	uuid,
+	status,
+	timestamp,
+	fromPhoneNumber,
+	toPhoneNumber,
+	isGroupChat,
+	groupId,
+	thumbImageUrl,
+	mediaUrl,
+	mediaMimeType,
+	mediaDesc,
+	latitude,
+	longittude,
+	type,
+	extras
+}
+
