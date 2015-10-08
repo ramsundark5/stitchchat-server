@@ -1,0 +1,10 @@
+mosquitto has been installed with a default configuration file.
+You can make changes to the configuration by editing:
+    /usr/local/etc/mosquitto/mosquitto.conf
+
+To have launchd start mosquitto at login:
+  ln -sfv /usr/local/opt/mosquitto/*.plist ~/Library/LaunchAgents
+Then to load mosquitto now:
+  launchctl load ~/Library/LaunchAgents/homebrew.mxcl.mosquitto.plist
+Or, if you don't want/need launchctl, you can just run:
+  mosquitto -c /usr/local/etc/mosquitto/mosquitto.conf

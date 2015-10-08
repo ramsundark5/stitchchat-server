@@ -4,11 +4,13 @@ var logger = new winston.Logger({
     transports: [
         new winston.transports.Console({
             handleExceptions: true,
-            json: false,
-            level: 'debug'
+            level: 'debug',
+            prettyPrint: true,
+            colorize: true,
+            showLevel: false
         }),
         new (winston.transports.File)({
-            filename: 'stitchchat.log'
+            filename: 'stitchchat_server.log'
         })
     ],
     exitOnError: false
