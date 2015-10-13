@@ -12,12 +12,8 @@ class UserDao{
 
     addUser(phoneNumber, newUser){
         let userJson = JSON.stringify(newUser);
-        //let that = this;
-        this.userTable.put(phoneNumber, newUser, function(err){
+        this.userTable.put(phoneNumber, userJson, function(err){
             logger.log("user added to db "+err);
-            /*that.userTable.get(phoneNumber, function(err, userObj) {
-                logger.log("user got from db "+userObj);
-            });*/
         });
     }
 
