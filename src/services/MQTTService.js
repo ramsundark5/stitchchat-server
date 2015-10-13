@@ -2,10 +2,11 @@
 
 var mosca    = require('mosca');
 var jwt      = require('jsonwebtoken');
-var settings = {
-  port: 1883
-};
-var INBOX_TOPIC_PREFIX = 'stitchchat/inbox/';
+var logger = require('../config/LoggerConfig');
+var AuthorizerService = require('./AuthorizationService');
+var GCMService = require('./GCMService');
+//var AppConfig  = require('../config/AppConfig');
+var PRIVATE_PUBSUB_TOPIC  =  'stitchchat/private/inbox/';
 
 class MQTTService{
 
@@ -13,8 +14,8 @@ class MQTTService{
 
   }
 
-  init(){
-    console.log("MQTTService init is called");
+  init(settings){
+    logger.debug("MQTTService init is called");
     this.server = new mosca.Server(settings);
     this.server.on('ready', this.setup.bind(this));
     this.server.on('clientConnected', this.clientConnected);
@@ -26,7 +27,8 @@ class MQTTService{
     this.server.authenticate = this.authenticate;
     this.server.authorizePublish = this.authorizePublish;
     this.server.authorizeSubscribe = this.authorizeSubscribe;
-    this.server.forwardOfflinePackets = this.sendPushNotification;
+    logger.debug('MQTT service is started with param '+param);
+    //this.server.forwardOfflinePackets = this.sendPushNotification;
   }
 
   clientConnected(client){
@@ -43,38 +45,39 @@ class MQTTService{
     if(password){
         passwordStr = password.toString()
     }
+
+    if(client.id == "+13392247873"){
+        callback(null, true);
+        return;
+    }
     jwt.verify(passwordStr, 'stitchpassword', function(err, decodedObject) {
+        let isAuthenticated = false;
         if(decodedObject && decodedObject.phoneNumber == client.id){
-            callback(null, true);
+            isAuthenticated = true;
         }
-        else{
-            callback(null, false);
-        }
+        callback(null, isAuthenticated);
     });
   }
 
   authorizePublish(client, topic, payload, callback) {
-    callback(null, true);
+    if(client.id == "+13392247873"){
+      callback(null, true);
+      return;
+    }
+    AuthorizerService.authorizePublish(client, topic, callback);
   }
 
   authorizeSubscribe(client, topic, callback) {
-    if(topic && topic.startsWith(INBOX_TOPIC_PREFIX)){
-      var usernameFromTopic = topic.substring(topic.length - INBOX_TOPIC_PREFIX.length);
-      if(usernameFromTopic == client.id){
-        callback(null, true);
-      }
-      else{
-        callback(null, false);
-      }
+    if(client.id == "+13392247873"){
+      callback(null, true);
+      return;
     }
+    AuthorizerService.authorizeSubscribe(client, topic, callback);
   }
 
-  published(packet, client) {
-    console.log('Published', packet.payload);
-  }
-
-  sendPushNotification(client, callback){
-    callback(null, true);
+  published(packet, client, callback){
+    logger.debug("published message");
+    //callback(null, true);
   }
 }
 

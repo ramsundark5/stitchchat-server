@@ -8,3 +8,6 @@ Then to load mosquitto now:
   launchctl load ~/Library/LaunchAgents/homebrew.mxcl.mosquitto.plist
 Or, if you don't want/need launchctl, you can just run:
   mosquitto -c /usr/local/etc/mosquitto/mosquitto.conf
+
+
+  https://github.com/mcollina/mosca/issues/363 for topic.replace error
