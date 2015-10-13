@@ -16,10 +16,14 @@ var ascoltatore = {
 
 var moscaSettings = {
     port: 1883,
+    http: {
+        port: 8000,
+        bundle: true
+    },
     backend: ascoltatore,
     persistence: {
         factory: mosca.persistence.LevelUp,
-        path: './stitchchatdb',
+        path: './moscadb',
         ttl: {
             subscriptions: 1000 * 60 * 10,
             packets: 1000 * 60 * 10

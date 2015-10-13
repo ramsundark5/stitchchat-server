@@ -27,6 +27,7 @@ class MQTTService{
     this.server.authenticate = this.authenticate;
     this.server.authorizePublish = this.authorizePublish;
     this.server.authorizeSubscribe = this.authorizeSubscribe;
+    //this.server.authorizeForward = this.authorizeForward;
     logger.debug('MQTT service is started with param '+param);
     //this.server.forwardOfflinePackets = this.sendPushNotification;
   }
@@ -76,9 +77,22 @@ class MQTTService{
   }
 
   published(packet, client, callback){
-    logger.debug("published message");
-    //callback(null, true);
+    logger.debug("published message"+ packet.payload + " from "+client);
+    if(callback){
+      callback(null, true);
+    }
+
   }
+
+  /*authorizeForward(client, packet, callback){
+    logger.debug("forwarded message"+ packet.payload + " to "+client);
+    if(client.id == "+13392247873"){
+      callback(null, true);
+      return;
+    }
+    logger.log("trying to publish the payload "+packet.payload);
+    AuthorizerService.authorizePublish(client, packet.topic, callback);
+  }*/
 }
 
 module.exports = new MQTTService();

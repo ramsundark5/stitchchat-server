@@ -1,12 +1,10 @@
 "use strict";
-var levelup = require("levelup");
-var sublevel = require("level-sublevel");
 var logger = require('../config/LoggerConfig');
+var DBHelper = require('./DBHelper');
 
 class UserDao{
     constructor(){
-        let dbHandle    = levelup('./stitchchatdb', { encoding: 'json' });
-        let db          = sublevel(dbHandle);
+        let db          = DBHelper.getDB();
         this.userTable  = db.sublevel("users");
     }
 

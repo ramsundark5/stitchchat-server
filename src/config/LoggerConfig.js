@@ -13,7 +13,7 @@ var logger = new winston.Logger({
             filename: 'stitchchat_server.log'
         })
     ],
-    exitOnError: false
+    exitOnError: true
 });
 
 module.exports = logger;

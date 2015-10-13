@@ -11,3 +11,7 @@ Or, if you don't want/need launchctl, you can just run:
 
 
   https://github.com/mcollina/mosca/issues/363 for topic.replace error
+
+
+
+  sample message -> {"header":{}, "message":{"text": "hello world from web"}}
