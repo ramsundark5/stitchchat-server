@@ -3,12 +3,14 @@
 var express = require('express');
 var AuthService = require('./AuthenticationService');
 var app = express();
+var AWS = require('aws-sdk');
 var logger = require('../config/LoggerConfig');
 
 class RegistrationService{
 
     constructor(){
         app.get('/register', this.registerNewUser);
+        app.get('/attachments', this.getPresignedUrl);
     }
 
     init(){
@@ -34,6 +36,20 @@ class RegistrationService{
                 res.status(401).json({ error: 'not authorized' })
             });
 
+    }
+
+    getPresignedUrl(){
+        var s3 = new AWS.S3();
+        var params = {Bucket: 'myBucket', Key: 'myKey'};
+        s3.getSignedUrl('getObject', params, function (err, url) {
+            if(url){
+                logger.log("The URL is", url);
+                res.json({ url: url })
+            }
+            if(err){
+                logger.error("error getting pre-signed url"+err);
+            }
+        });
     }
 }
 
