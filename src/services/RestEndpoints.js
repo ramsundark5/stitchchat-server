@@ -40,7 +40,8 @@ class RegistrationService{
 
     getPresignedUrl(req, res){
         var s3 = new AWS.S3();
-        var params = {Bucket: 'incogattachments', Key: 'AKIAI3C3KHTTXWZNCDUQ'};
+        var s3AccessKey = process.env.S3_ACCESS_KEY;
+        var params = {Bucket: 'incogattachments', Key: s3AccessKey};
         s3.getSignedUrl('putObject', params, function (err, url) {
             if(url){
                 logger.log("The URL is", url);

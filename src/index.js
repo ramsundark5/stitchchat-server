@@ -1,5 +1,5 @@
 "use strict";
-
+var env = require('dotenv').load();
 var logger = require('./config/LoggerConfig');
 var MQTTService = require('./services/MQTTService');
 var mosca    = require('mosca');
