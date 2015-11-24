@@ -43,11 +43,15 @@ class RegistrationService{
         var s3AccessKey = process.env.S3_ACCESS_KEY;
         var s3 = new AWS.S3();
         var attachmentId = uuid.v4();
+        var fileExtension = req.query('ext');
+        if(fileExtension){
+            attachmentId = attachmentId + "." + fileExtension;
+        }
         var params = {Bucket: 'incogattachments', Key: attachmentId, ContentType: 'multipart/form-data'};
         s3.getSignedUrl('putObject', params, function (err, url) {
             if(url){
                 logger.log("The URL is", url);
-                res.json({ url: url })
+                res.json({ url: url, attachmentId: attachmentId })
             }
             if(err){
                 logger.error("error getting pre-signed url"+err);
