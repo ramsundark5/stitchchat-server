@@ -40,7 +40,8 @@ class AuthService{
         return null;
     }
 
-    addUserToDB(serverVerifiedPhoneNumber){
+    addUserToDB(serverResponse){
+        let serverVerifiedPhoneNumber = serverResponse.body.phone_number;
         if(!serverVerifiedPhoneNumber){
             return null;
         }

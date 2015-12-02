@@ -4,7 +4,7 @@ var DBHelper = require('./DBHelper');
 
 class UserDao{
     constructor(){
-        this.db          = DBHelper.getDB();
+        this.db = DBHelper.getDB();
     }
 
     addUser(phoneNumber, newUser){
