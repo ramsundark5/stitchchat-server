@@ -8,13 +8,18 @@ var UserDao = require('../dao/UserDao');
 
 class AuthService{
 
-    registerUser(providerUrl, authHeaders, userSentPhoneNumber){
+    registerUser(providerUrl, authHeaders){
         let verifyTokenRequestPromise = this.verifyTokenRequest(providerUrl, authHeaders);
 
         return verifyTokenRequestPromise
-            .then(this.confirmUserIdentity.bind(null, userSentPhoneNumber))
-            .then(this.addUserToDB)
-            .then(this.generateJWTToken);
+            .then(this.addUserToDB);
+    }
+
+    authenticate(providerUrl, authHeaders, userSentPhoneNumber){
+        let verifyTokenRequestPromise = this.verifyTokenRequest(providerUrl, authHeaders);
+
+        return verifyTokenRequestPromise
+            .then(this.confirmUserIdentity.bind(null, userSentPhoneNumber));
     }
 
     verifyTokenRequest(providerUrl, authHeaders){
@@ -44,15 +49,6 @@ class AuthService{
         return newUser;
     }
 
-    generateJWTToken(newUser){
-        if(!newUser){
-            return null;
-        }
-        let tokenObj = { phoneNumber: newUser.id };
-        let token = jwt.sign(tokenObj, 'stitchpassword');
-        logger.debug("jwt token is "+ token);
-        return token;
-    }
 }
 
 module.exports = new AuthService();

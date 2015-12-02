@@ -4,19 +4,18 @@ var DBHelper = require('./DBHelper');
 
 class UserDao{
     constructor(){
-        let db          = DBHelper.getDB();
-        this.userTable  = db.sublevel("users");
+        this.db          = DBHelper.getDB();
     }
 
     addUser(phoneNumber, newUser){
         let userJson = JSON.stringify(newUser);
-        this.userTable.put(phoneNumber, userJson, function(err){
+        this.db.put(phoneNumber, userJson, function(err){
             logger.log("user added to db "+err);
         });
     }
 
     getUser(phoneNumber, cb){
-        this.userTable.get(phoneNumber, function(err, userJson) {
+        this.db.get(phoneNumber, function(err, userJson) {
             if(userJson){
                 let userObj = JSON.parse(userJson);
                 return cb(err, userObj);

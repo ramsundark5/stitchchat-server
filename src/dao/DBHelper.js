@@ -4,8 +4,7 @@ var sublevel = require("level-sublevel");
 
 class DBHelper{
     constructor(){
-        let dbHandle    = levelup('./stitchchatdb', { encoding: 'json' });
-        this.db          = sublevel(dbHandle);
+        this.db    = levelup('./stitchchatdb', { encoding: 'json' });
     }
 
     getDB(){

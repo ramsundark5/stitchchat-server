@@ -1,14 +1,16 @@
 "use strict";
 
 var mosca    = require('mosca');
-var jwt      = require('jsonwebtoken');
 var Buffer = require('buffer').Buffer;
 var logger = require('../config/LoggerConfig');
+var AuthenticationService = require('./AuthenticationService');
 var AuthorizerService = require('./AuthorizationService');
 var GCMService = require('./GCMService');
 var AttachmentService = require('./AttachmentService');
-//var AppConfig  = require('../config/AppConfig');
+var AppConfig  = require('../config/AppConfig');
+
 var PRIVATE_PUBSUB_TOPIC  =  'stitchchat/private/inbox/';
+var GROUP_PUBSUB_TOPIC    =  'stitchchat/group/inbox/';
 var GET_SIGNED_URL_TOPIC  = 'stitchchat/signedURL';
 var PRIVATE_SIGNED_URL_TOPIC_PREFIX = 'stitchchat/private/signedURL/';
 var REGISTER_TOPIC        = 'stitchchat/register';
@@ -46,22 +48,7 @@ class MQTTService{
 
   authenticate(client, username, password, callback) {
     console.log("authenticate is called");
-    let passwordStr = '';
-    if(password){
-        passwordStr = password.toString()
-    }
-
-    if(client.id == "+13392247873"){
-        callback(null, true);
-        return;
-    }
-    jwt.verify(passwordStr, 'stitchpassword', function(err, decodedObject) {
-        let isAuthenticated = false;
-        if(decodedObject && decodedObject.phoneNumber == client.id){
-            isAuthenticated = true;
-        }
-        callback(null, isAuthenticated);
-    });
+    //AuthenticationService.authenticate(username);
   }
 
   authorizeSubscribe(client, topic, callback) {
@@ -75,11 +62,23 @@ class MQTTService{
   published(packet, client){
     try{
       logger.debug("published message"+ packet.payload + " from "+client);
-      if(packet.topic == GET_SIGNED_URL_TOPIC){
-        if(packet.payload){
-          var payloadStr = packet.payload.toString();
-          this.sendPresignedUrlToClient(payloadStr, client.id);
-        }
+      switch (packet.topic) {
+        case GET_SIGNED_URL_TOPIC:
+          if(packet.payload){
+            var payloadStr = packet.payload.toString();
+            this.sendPresignedUrlToClient(payloadStr, client.id);
+          }
+          break;
+
+        case REGISTER_TOPIC:
+          if(packet.payload){
+            var payloadStr = packet.payload.toString();
+            this.registerUser(payloadStr, client);
+          }
+          break;
+
+        default:
+          break;
       }
     }catch(err){
       console.log("error publishing message "+ err);
@@ -89,6 +88,14 @@ class MQTTService{
   authorizeForward(client, packet, callback){
     logger.debug("forwarded message"+ packet.payload + " to "+client);
     callback(null, true);
+  }
+
+  registerUser(payloadStr){
+    var registrationMessage = JSON.parse(payloadStr);
+    if(!(registrationMessage && registrationMessage.authHeaders)){
+      return;
+    }
+    AuthenticationService.registerUser(registrationMessage.providerUrl, registrationMessage.authHeaders);
   }
 
   sendPresignedUrlToClient(payloadStr, clientId){
