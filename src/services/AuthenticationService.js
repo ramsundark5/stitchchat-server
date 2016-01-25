@@ -2,18 +2,8 @@
 
 var request = require('superagent-bluebird-promise');
 var logger  = require('../config/LoggerConfig');
-var User    = require('../models/User');
-var jwt     = require('jsonwebtoken');
-var UserDao = require('../dao/UserDao');
 
 class AuthService{
-
-    registerUser(providerUrl, authHeaders){
-        let verifyTokenRequestPromise = this.verifyTokenRequest(providerUrl, authHeaders);
-
-        return verifyTokenRequestPromise
-            .then(this.addUserToDB);
-    }
 
     authenticate(providerUrl, authHeaders, userSentPhoneNumber){
         let verifyTokenRequestPromise = this.verifyTokenRequest(providerUrl, authHeaders);
@@ -38,16 +28,6 @@ class AuthService{
             return serverVerifiedPhoneNumber;
         }
         return null;
-    }
-
-    addUserToDB(serverResponse){
-        let serverVerifiedPhoneNumber = serverResponse.body.phone_number;
-        if(!serverVerifiedPhoneNumber){
-            return null;
-        }
-        let newUser = new User(serverVerifiedPhoneNumber);
-        UserDao.addUser(serverVerifiedPhoneNumber, newUser);
-        return newUser;
     }
 
 }

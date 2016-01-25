@@ -18,3 +18,11 @@ Or, if you don't want/need launchctl, you can just run:
 
 
   /Users/ramsundar/Library/Developer/CoreSimulator/Devices/592E461E-4732-4E2D-9900-43C99BAD042C/data/Containers/Data/Application/B31C99ED-F245-42CF-8049-BB596C8A5257/Documents
+
+  install erlang
+  set erlang home
+  install rebar3
+  install vernemq
+  compile plugin
+  start vernemq
+  add plugin
