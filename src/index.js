@@ -22,8 +22,8 @@ class Routes{
         var userSentPhoneNumber = reqHeaders['phonenumber'];
         let authPromise = AuthService.authenticate(providerUrl, authHeader, userSentPhoneNumber);
         authPromise
-            .then(function(){
-                res.status(200);
+            .then(function(token){
+                res.status(200).json({ jwt: token });
             })
             .catch(function(error){
                 logger.error("error authenticating user"+error);
@@ -34,7 +34,7 @@ class Routes{
     getPresignedUrl(req, res){
         var s3 = new AWS.S3();
         var attachmentId = uuid.v4();
-        var fileExtension = req.query('ext');
+        var fileExtension = req.query.ext;
         if(fileExtension){
             attachmentId = attachmentId + "." + fileExtension;
         }

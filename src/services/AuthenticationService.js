@@ -2,6 +2,7 @@
 
 var request = require('superagent-bluebird-promise');
 var logger  = require('../config/LoggerConfig');
+var jwt     = require('jsonwebtoken');
 
 class AuthService{
 
@@ -9,7 +10,8 @@ class AuthService{
         let verifyTokenRequestPromise = this.verifyTokenRequest(providerUrl, authHeaders);
 
         return verifyTokenRequestPromise
-            .then(this.confirmUserIdentity.bind(null, userSentPhoneNumber));
+            .then(this.confirmUserIdentity.bind(null, userSentPhoneNumber))
+            .then(this.generateJWTToken);;
     }
 
     verifyTokenRequest(providerUrl, authHeaders){
@@ -30,6 +32,15 @@ class AuthService{
         return null;
     }
 
+    generateJWTToken(phoneNumber){
+        if(!phoneNumber){
+            return null;
+        }
+        let tokenObj = { phoneNumber: phoneNumber };
+        let token = jwt.sign(tokenObj, 'stitchpassword');
+        logger.debug("jwt token is "+ token);
+        return token;
+    }
 }
 
 module.exports = new AuthService();
