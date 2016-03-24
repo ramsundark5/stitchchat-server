@@ -12,6 +12,7 @@ class Routes{
     constructor(){
         app.get('/authenticate', this.authenticate);
         app.get('/attachments', this.getPresignedUrl);
+        app.get('/attachments/:attachmentId', this.getPresignedAttachmentUrl);
         this.init();
     }
 
@@ -47,6 +48,22 @@ class Routes{
             if(err){
                 logger.error("error getting pre-signed url"+err);
                 res.status(500).json({ error: 'error getting pre-signed url' });
+            }
+        });
+    }
+
+    getPresignedAttachmentUrl(req, res){
+        var s3 = new AWS.S3();
+        var attachmentId = req.params.attachmentId;
+        var params = {Bucket: 'incogattachments', Key: attachmentId};
+        s3.getSignedUrl('getObject', params, function (err, url) {
+            if(url){
+                logger.log("The attachment URL is", url);
+                res.json({ url: url, attachmentId: attachmentId })
+            }
+            if(err){
+                logger.error("error getting pre-signed attachment url"+err);
+                res.status(500).json({ error: 'error getting pre-signed attachment url' });
             }
         });
     }
