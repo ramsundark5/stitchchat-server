@@ -6,6 +6,7 @@ var app = express();
 var AWS = require('aws-sdk');
 var logger = require('./config/LoggerConfig');
 var uuid = require('node-uuid');
+var env = require('dotenv').config();
 
 class Routes{
 
@@ -24,7 +25,7 @@ class Routes{
         let authPromise = AuthService.authenticate(providerUrl, authHeader, userSentPhoneNumber);
         authPromise
             .then(function(token){
-                res.status(200).json({ jwt: token });
+                res.status(200).json({ token: token });
             })
             .catch(function(error){
                 logger.error("error authenticating user"+error);

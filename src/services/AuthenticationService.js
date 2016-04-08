@@ -2,7 +2,8 @@
 
 var request = require('superagent-bluebird-promise');
 var logger  = require('../config/LoggerConfig');
-var jwt     = require('jsonwebtoken');
+var FirebaseTokenGenerator = require("firebase-token-generator");
+var uuid = require('node-uuid');
 
 class AuthService{
 
@@ -11,7 +12,7 @@ class AuthService{
 
         return verifyTokenRequestPromise
             .then(this.confirmUserIdentity.bind(null, userSentPhoneNumber))
-            .then(this.generateJWTToken);;
+            .then(this.generateJWTToken);
     }
 
     verifyTokenRequest(providerUrl, authHeaders){
@@ -36,9 +37,9 @@ class AuthService{
         if(!phoneNumber){
             return null;
         }
-        let tokenObj = { phoneNumber: phoneNumber };
-        let token = jwt.sign(tokenObj, 'stitchpassword');
-        logger.debug("jwt token is "+ token);
+        var tokenGenerator = new FirebaseTokenGenerator(process.env.FIREBASE_ACCESS_KEY);
+        var uniqueId = uuid.v4();
+        var token = tokenGenerator.createToken({ uid: uniqueId});
         return token;
     }
 }
