@@ -1,7 +1,8 @@
 "use strict";
 
 class GCMService{
-    sendPushNotification(){
+    
+    sendPushNotification(message, gcmToken){
 
     }
 }

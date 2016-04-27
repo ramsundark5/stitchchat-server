@@ -2,11 +2,12 @@
 
 var express = require('express');
 var AuthService = require('./services/AuthenticationService');
+var PushNotificationService  = require('./services/PushNotificationService');
 var app = express();
 var AWS = require('aws-sdk');
 var logger = require('./config/LoggerConfig');
 var uuid = require('node-uuid');
-var env = require('dotenv').config();
+require('dotenv').config();
 
 class Routes{
 
@@ -70,10 +71,11 @@ class Routes{
     }
 
     init(){
-        var server = app.listen(3000, function () {
+        var server = app.listen(process.env.PORT || 3000, function () {
             var port = server.address().port;
-
+            PushNotificationService.initQueueHandler();
             logger.debug('stitchchat-register listening at port ' + port);
+
         });
     }
 
