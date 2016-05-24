@@ -1,0 +1,91 @@
+path / {
+   read() {false}
+   write() {false}
+}
+
+//only authenticated users can register as users
+path /users {
+   write(){ currentUser() != null }
+}
+
+//only authenticated users can send their presence
+path /presence {
+   write(){ currentUser() != null }
+}
+
+
+//can send messages to only registered user's inbox
+path /private_messages/{phoneNumber} {
+  validate() { getUserInfo(phoneNumber) != null }
+}
+
+//check if user is allowed to add message to user's inbox
+path /private_messages/{phoneNumber}/{messageId} is Message {
+  write() { isUserAllowed(getUserInfo(phoneNumber)) }
+  read() { isUserAllowed(getUserInfo(phoneNumber)) }
+}
+
+//only group members can add messages to the group
+path /group_messages/{groupId} {
+  write() { isMember(getGroupInfo(groupId)) != null }
+}
+
+path /group_info {
+  create(){ currentUser() != null }
+}
+
+path /group_info/{groupId} {
+  write() { isMember(getGroupInfo(groupId)) != null }
+}
+
+type User {
+  // Anyone can add themselves to a Room with their own nickname.
+  create() { isUser(key()) }
+  phoneType: String,
+  pushToken: String,
+  timestamp: Number
+}
+
+type GroupInfo {
+  write() { isMember(this) }
+
+  displayName: String,
+  timestamp: Number,
+  members: String[]
+}
+
+type Message {
+  // Allow create (but not modify/delete).
+  create() { true }
+  senderId: String,
+  receiverId: String,
+  message: String,
+  isGroupThread: Boolean
+}
+
+type UserID extends String {
+  // Only a user can create content with their userid.
+  validate() { isUser(this) }
+}
+
+getUserInfo(phoneNumber) {
+    prior(root).users[phoneNumber]
+}
+
+getGroupInfo(groupId) {
+    prior(root).group_info[groupId]
+}
+
+isMember(groupInfo) {
+  groupInfo.groupMembers[currentUser()] != null
+}
+
+isUserAllowed(recipientUser){
+    recipientUser != null && recipientUser.blocked[currentUser()] != null
+}
+
+isUser(uid) { auth != null && uid == currentUser() }
+currentUser() { auth.uid }
+
+initial(value, init) { value == (isInitial(value) ? init : prior(value)) }
+isInitial(value) { prior(value) == null }

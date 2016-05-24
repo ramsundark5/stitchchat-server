@@ -26,3 +26,7 @@ Or, if you don't want/need launchctl, you can just run:
   compile plugin
   start vernemq
   add plugin
+
+
+
+  firebase-bolt < stitchchat.bolt > stitchchat.json
