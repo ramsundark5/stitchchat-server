@@ -5,50 +5,57 @@ path / {
 
 //only authenticated users can register as users
 path /users {
+   read(){ currentUser() != null }
+   write(){ currentUser() != null }
+}
+
+path /queue/tasks {
+   write(){ currentUser() != null }
+}
+
+path /invites {
+   read(){ currentUser() != null }
+   write(){ currentUser() != null }
+}
+
+path /message_status {
+   read(){ currentUser() != null }
    write(){ currentUser() != null }
 }
 
 //only authenticated users can send their presence
 path /presence {
+   read(){ currentUser() != null }
    write(){ currentUser() != null }
 }
 
-
 //can send messages to only registered user's inbox
 path /private_messages/{phoneNumber} {
-  validate() { getUserInfo(phoneNumber) != null }
-}
-
-//check if user is allowed to add message to user's inbox
-path /private_messages/{phoneNumber}/{messageId} is Message {
-  write() { isUserAllowed(getUserInfo(phoneNumber)) }
   read() { isUserAllowed(getUserInfo(phoneNumber)) }
+  write() { isUserAllowed(getUserInfo(phoneNumber)) }
 }
 
 //only group members can add messages to the group
 path /group_messages/{groupId} {
+  read() { isMember(getGroupInfo(groupId)) != null }
   write() { isMember(getGroupInfo(groupId)) != null }
 }
 
-path /group_info {
-  create(){ currentUser() != null }
-}
-
 path /group_info/{groupId} {
+  validate(){ currentUser() != null }
+  read() { isMember(getGroupInfo(groupId)) != null }
   write() { isMember(getGroupInfo(groupId)) != null }
 }
 
 type User {
   // Anyone can add themselves to a Room with their own nickname.
-  create() { isUser(key()) }
+  create() { isUser(this) }
   phoneType: String,
   pushToken: String,
   timestamp: Number
 }
 
 type GroupInfo {
-  write() { isMember(this) }
-
   displayName: String,
   timestamp: Number,
   members: String[]
@@ -81,7 +88,7 @@ isMember(groupInfo) {
 }
 
 isUserAllowed(recipientUser){
-    recipientUser != null && recipientUser.blocked[currentUser()] != null
+    recipientUser != null && recipientUser.blocked[currentUser()] == null
 }
 
 isUser(uid) { auth != null && uid == currentUser() }

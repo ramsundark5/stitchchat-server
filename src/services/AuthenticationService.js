@@ -38,8 +38,7 @@ class AuthService{
             return null;
         }
         var tokenGenerator = new FirebaseTokenGenerator(process.env.FIREBASE_ACCESS_KEY);
-        var uniqueId = uuid.v4();
-        var token = tokenGenerator.createToken({ uid: uniqueId});
+        var token = tokenGenerator.createToken({ uid: phoneNumber});
         return token;
     }
 }

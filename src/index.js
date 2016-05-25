@@ -74,7 +74,7 @@ class Routes{
         var server = app.listen(process.env.PORT || 3000, function () {
             var port = server.address().port;
             PushNotificationService.initQueueHandler();
-            logger.debug('stitchchat-register listening at port ' + port);
+            logger.debug('stitchchat-server listening at port ' + port);
 
         });
     }
