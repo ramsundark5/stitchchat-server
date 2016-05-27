@@ -35,6 +35,10 @@ path /private_messages/{phoneNumber} {
   write() { isUserAllowed(getUserInfo(phoneNumber)) }
 }
 
+path /group_info {
+  write(){ currentUser() != null }
+}
+
 //only group members can add messages to the group
 path /group_messages/{groupId} {
   read() { isMember(getGroupInfo(groupId)) != null }
@@ -56,6 +60,11 @@ type User {
 }
 
 type GroupInfo {
+  create() { true }
+  update() { isUser(prior(this).creator) }
+  delete() { isUser(prior(this).creator) }
+
+  creator: String,
   displayName: String,
   timestamp: Number,
   members: String[]

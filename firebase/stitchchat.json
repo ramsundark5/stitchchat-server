@@ -27,17 +27,18 @@
         ".write": "root.child('users').child($phoneNumber).val() != null && root.child('users').child($phoneNumber).child('blocked').child(auth.uid).val() == null"
       }
     },
-    "group_messages": {
-      "$groupId": {
-        ".read": "root.child('group_info').child($groupId).child('groupMembers').child(auth.uid).val() != null",
-        ".write": "root.child('group_info').child($groupId).child('groupMembers').child(auth.uid).val() != null"
-      }
-    },
     "group_info": {
+      ".write": "auth.uid != null",
       "$groupId": {
         ".validate": "auth.uid != null",
-        ".read": "root.child('group_info').child($groupId).child('groupMembers').child(auth.uid).val() != null",
-        ".write": "root.child('group_info').child($groupId).child('groupMembers').child(auth.uid).val() != null"
+        ".read": "root.child('group_info').child($groupId).child('groupMembers').child(auth.uid).val() != null != null",
+        ".write": "root.child('group_info').child($groupId).child('groupMembers').child(auth.uid).val() != null != null"
+      }
+    },
+    "group_messages": {
+      "$groupId": {
+        ".read": "root.child('group_info').child($groupId).child('groupMembers').child(auth.uid).val() != null != null",
+        ".write": "root.child('group_info').child($groupId).child('groupMembers').child(auth.uid).val() != null != null"
       }
     }
   }
