@@ -3,7 +3,6 @@
 var request = require('superagent-bluebird-promise');
 var logger  = require('../config/LoggerConfig');
 var FirebaseTokenGenerator = require("firebase-token-generator");
-var uuid = require('node-uuid');
 
 class AuthService{
 

@@ -2,3 +2,5 @@
 .env
 *.pem
 *.pkey
+node_modules/
+.idea/
